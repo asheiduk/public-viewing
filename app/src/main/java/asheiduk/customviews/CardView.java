@@ -38,11 +38,13 @@ public class CardView extends View {
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeWidth(3.0f);
 		
-		// Rechteck, 10px nach innen gesetzt
-		frame.set(0.0f, 0.0f,
-				getWidth(), getHeight());
-		frame.inset(10.0f, 10.0f);
-		
+		// äußeres Rechteck
+		frame.set(
+			getPaddingLeft(),
+			getPaddingTop(),
+			getWidth() - getPaddingRight(),
+			getHeight() - getPaddingBottom());
+
 		// und los
 		canvas.drawRect(frame, paint);
 		canvas.drawLine(
