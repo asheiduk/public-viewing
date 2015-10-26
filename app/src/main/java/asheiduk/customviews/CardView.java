@@ -1,6 +1,7 @@
 package asheiduk.customviews;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,18 +26,45 @@ public class CardView extends View {
 	// Berechnete Werte
 	private String cardValueString;
 	
-	// ========== Konstruktoren ==========
+	// ========== Konstruktoren & Initialisierung ==========
 	
 	public CardView(Context context) {
 		super(context);
+		init();
 	}
 	
 	public CardView(Context context, AttributeSet attrs) {
-		super(context, attrs);
+		this(context, attrs, 0);
 	}
 	
 	public CardView(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
+		obtainStyledAttributes(context, attrs, defStyleAttr, 0);
+		init();
+	}
+
+	private void obtainStyledAttributes(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+		TypedArray a = context.getTheme().obtainStyledAttributes(
+				attrs, R.styleable.CardView, defStyleAttr, defStyleRes);
+		try {
+			cardValue = a.getInt(R.styleable.CardView_cardValue, cardValue);
+			cardName = a.getString(R.styleable.CardView_cardName);
+		} finally {
+			a.recycle();
+		}
+	}
+	
+	private void init(){
+		updateCardValue();
+		
+		// schwarzer Rand, keine Füllung
+		paint.setColor(Color.BLACK);
+		paint.setStyle(Style.STROKE);
+		paint.setStrokeWidth(3.0f);
+
+		// Wert und Name
+		valuePaint.setTextAlign(Align.CENTER);
+		namePaint.setTextAlign(Align.CENTER);
 	}
 	
 	// ========== onSizeChanged ==========
@@ -44,23 +72,16 @@ public class CardView extends View {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		
-		// schwarzer Rand, keine Füllung
-		paint.setColor(Color.BLACK);
-		paint.setStyle(Style.STROKE);
-		paint.setStrokeWidth(3.0f);
-		
-		// Wert und Name
-		valuePaint.setTextAlign(Align.CENTER);
-		valuePaint.setTextSize(0.25f * h);
-		namePaint.setTextAlign(Align.CENTER);
-		namePaint.setTextSize(0.15f * h);
-		
 		// äußeres Rechteck
 		frame.set(
 				getPaddingLeft(),
 				getPaddingTop(),
 				w - getPaddingRight(),
 				h - getPaddingBottom());
+		
+		// Wert und Name
+		valuePaint.setTextSize(0.25f * frame.height());
+		namePaint.setTextSize(0.15f * frame.height());
 	}
 	
 	// ========== onDraw ==========

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <asheiduk.customviews.CardView 
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:customviews="http://schemas.android.com/apk/res/asheiduk.customviews"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
@@ -10,4 +11,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="asheiduk.customviews.MainActivity"
+    customviews:cardName="Salz"
+    customviews:cardValue="3"
     />
