@@ -28,10 +28,10 @@ public class CardView extends View {
 		super(context, attrs, defStyleAttr);
 	}
 	
-	// ========== onDraw ==========
+	// ========== onSizeChanged ==========
 	
 	@Override
-	protected void onDraw(Canvas canvas) {
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		
 		// schwarzer Rand, keine Füllung
 		paint.setColor(Color.BLACK);
@@ -40,12 +40,16 @@ public class CardView extends View {
 		
 		// äußeres Rechteck
 		frame.set(
-			getPaddingLeft(),
-			getPaddingTop(),
-			getWidth() - getPaddingRight(),
-			getHeight() - getPaddingBottom());
-
-		// und los
+				getPaddingLeft(),
+				getPaddingTop(),
+				w - getPaddingRight(),
+				h - getPaddingBottom());
+	}
+	
+	// ========== onDraw ==========
+	
+	@Override
+	protected void onDraw(Canvas canvas) {
 		canvas.drawRect(frame, paint);
 		canvas.drawLine(
 				frame.left, frame.top,
