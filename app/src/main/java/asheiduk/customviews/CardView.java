@@ -11,6 +11,9 @@ import android.view.View;
 
 public class CardView extends View {
 	
+	private Paint paint = new Paint();
+	private RectF frame = new RectF();
+	
 	// ========== Konstruktoren ==========
 	
 	public CardView(Context context) {
@@ -31,13 +34,11 @@ public class CardView extends View {
 	protected void onDraw(Canvas canvas) {
 		
 		// schwarzer Rand, keine Füllung
-		Paint paint = new Paint();
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeWidth(3.0f);
 		
 		// Rechteck, 10px nach innen gesetzt
-		RectF frame = new RectF();
 		frame.set(0.0f, 0.0f, 
 				canvas.getWidth(), canvas.getHeight());
 		frame.inset(10.0f, 10.0f);
