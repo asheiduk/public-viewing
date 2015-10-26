@@ -39,8 +39,8 @@ public class CardView extends View {
 		paint.setStrokeWidth(3.0f);
 		
 		// Rechteck, 10px nach innen gesetzt
-		frame.set(0.0f, 0.0f, 
-				canvas.getWidth(), canvas.getHeight());
+		frame.set(0.0f, 0.0f,
+				getWidth(), getHeight());
 		frame.inset(10.0f, 10.0f);
 		
 		// und los
