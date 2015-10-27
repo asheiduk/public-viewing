@@ -28,6 +28,7 @@ public class CardView extends View {
 	
 	// Berechnete Werte
 	private String[] boxValues;
+	private RectF[] boxRects;
 	private String cardValueString;
 	
 	// ========== Konstruktoren & Initialisierung ==========
@@ -98,13 +99,35 @@ public class CardView extends View {
 		boxTextPaint.setTextSize(0.1f * frame.height());
 		
 		// Kästchen
+		updateBoxRects();
+	}
+
+	protected void updateBoxRects() {
+		boxRects = new RectF[cardCountMax];
+		
 		float boxWidth  = 0.25f * frame.width();
 		float boxHeight = 0.17f * frame.height();
-		rover.set(
-				frame.left,
-				frame.top,
-				frame.left + boxWidth,
-				frame.top  + boxHeight);
+		rover.set(0, 0, boxWidth, boxHeight);
+		
+		// Erste Reihe - Oben
+		rover.offsetTo(frame.left, frame.top);
+		updateBoxRow(0, 4, boxWidth);
+		
+		// Zweite Reihe - Unten
+		rover.offsetTo(frame.left, frame.bottom - boxHeight);
+		updateBoxRow(4, 8, boxWidth);
+		
+		// Dritte Reihe - von rechts nach links
+		rover.offset(-boxWidth, -boxHeight);
+		updateBoxRow(8,  12, -boxWidth);
+	}
+	
+	private void updateBoxRow(int startBox, int endBox, float offsetX){
+		int N = Math.min(endBox, boxRects.length);
+		for(int i=startBox; i<N; ++i){
+			boxRects[i] = new RectF(rover);
+			rover.offset(offsetX, 0);
+		}
 	}
 	
 	// ========== onDraw ==========
@@ -132,17 +155,16 @@ public class CardView extends View {
 					namePaint);
 		}
 		
-		// Erste Kästchen-Reihe
-		rover.offsetTo(frame.left, frame.top);
-		int countRow1 = Math.min(4, cardCountMax);
-		for(int i=0; i<countRow1; ++i){
-			canvas.drawRect(rover, paint);
-			String s = boxValues[i];
-			canvas.drawText(s,
-					rover.centerX(),
-					rover.bottom - 0.2f * rover.height(),
+		// Kästchen
+		for(int i=0; i<cardCountMax; ++i){
+			RectF box = boxRects[i];
+			String value = boxValues[i];
+			
+			canvas.drawRect(box, paint);
+			canvas.drawText(value, 
+					box.centerX(), 
+					box.bottom - 0.2f * box.height(),
 					boxTextPaint);
-			rover.offset(rover.width(), 0);
 		}
 	}
 	
@@ -189,6 +211,7 @@ public class CardView extends View {
 	public void setCardCountMax(int cardCount) {
 		this.cardCountMax = cardCount;
 		updateBoxValues();
+		updateBoxRects();
 		invalidate();
 	}
 }
