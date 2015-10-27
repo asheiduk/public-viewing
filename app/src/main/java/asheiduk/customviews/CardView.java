@@ -14,16 +14,20 @@ import android.view.View;
 public class CardView extends View {
 	
 	private Paint paint = new Paint();
+	private Paint boxTextPaint = new Paint();
 	private Paint valuePaint = new Paint();
 	private Paint namePaint = new Paint();
 	
 	private RectF frame = new RectF();
+	private RectF rover = new RectF();
 	
 	// Properties
 	private String cardName;
 	private int cardValue;
+	private int cardCountMax;
 	
 	// Berechnete Werte
+	private String[] boxValues;
 	private String cardValueString;
 	
 	// ========== Konstruktoren & Initialisierung ==========
@@ -48,6 +52,7 @@ public class CardView extends View {
 				attrs, R.styleable.CardView, defStyleAttr, defStyleRes);
 		try {
 			cardValue = a.getInt(R.styleable.CardView_cardValue, cardValue);
+			cardCountMax = a.getInt(R.styleable.CardView_cardCountMax, cardCountMax);
 			cardName = a.getString(R.styleable.CardView_cardName);
 		} finally {
 			a.recycle();
@@ -56,15 +61,21 @@ public class CardView extends View {
 	
 	private void init(){
 		updateCardValue();
+		updateBoxValues();
 		
 		// schwarzer Rand, keine Füllung
 		paint.setColor(Color.BLACK);
 		paint.setStyle(Style.STROKE);
 		paint.setStrokeWidth(3.0f);
-
+		
 		// Wert und Name
 		valuePaint.setTextAlign(Align.CENTER);
 		namePaint.setTextAlign(Align.CENTER);
+		
+		// Text in Kästchen
+		boxTextPaint.setStyle(Style.FILL);
+		boxTextPaint.setColor(Color.BLACK);
+		boxTextPaint.setTextAlign(Align.CENTER);
 	}
 	
 	// ========== onSizeChanged ==========
@@ -82,6 +93,18 @@ public class CardView extends View {
 		// Wert und Name
 		valuePaint.setTextSize(0.25f * frame.height());
 		namePaint.setTextSize(0.15f * frame.height());
+		
+		// Text in Kästchen
+		boxTextPaint.setTextSize(0.1f * frame.height());
+		
+		// Kästchen
+		float boxWidth  = 0.25f * frame.width();
+		float boxHeight = 0.17f * frame.height();
+		rover.set(
+				frame.left,
+				frame.top,
+				frame.left + boxWidth,
+				frame.top  + boxHeight);
 	}
 	
 	// ========== onDraw ==========
@@ -108,12 +131,33 @@ public class CardView extends View {
 					centerX, 0.65f * h + top,
 					namePaint);
 		}
+		
+		// Erste Kästchen-Reihe
+		rover.offsetTo(frame.left, frame.top);
+		int countRow1 = Math.min(4, cardCountMax);
+		for(int i=0; i<countRow1; ++i){
+			canvas.drawRect(rover, paint);
+			String s = boxValues[i];
+			canvas.drawText(s,
+					rover.centerX(),
+					rover.bottom - 0.2f * rover.height(),
+					boxTextPaint);
+			rover.offset(rover.width(), 0);
+		}
 	}
 	
 	// ========== Abgeleitete Werte ==========
 	
 	protected void updateCardValue(){
 		cardValueString = Integer.toString(cardValue);
+	}
+	
+	protected void updateBoxValues(){
+		boxValues = new String[cardCountMax];
+		for(int i=0; i<cardCountMax; ++i){
+			int boxValue = (i+1)*(i+1)*cardValue;
+			boxValues[i] = Integer.toString(boxValue);
+		}
 	}
 	
 	// ========== Properties ==========
@@ -134,6 +178,17 @@ public class CardView extends View {
 	public void setCardValue(int cardValue) {
 		this.cardValue = cardValue;
 		updateCardValue();
+		updateBoxValues();
+		invalidate();
+	}
+	
+	public int getCardCountMax() {
+		return cardCountMax;
+	}
+	
+	public void setCardCountMax(int cardCount) {
+		this.cardCountMax = cardCount;
+		updateBoxValues();
 		invalidate();
 	}
 }

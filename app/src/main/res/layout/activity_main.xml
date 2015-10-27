@@ -13,4 +13,5 @@
     tools:context="asheiduk.customviews.MainActivity"
     customviews:cardName="Salz"
     customviews:cardValue="3"
+    customviews:cardCountMax="9"
     />
