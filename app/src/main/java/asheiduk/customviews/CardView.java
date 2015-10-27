@@ -14,7 +14,9 @@ import android.view.View;
 public class CardView extends View {
 	
 	private Paint paint = new Paint();
+	private Paint inversePaint = new Paint();
 	private Paint boxTextPaint = new Paint();
+	private Paint inverseBoxTextPaint = new Paint();
 	private Paint valuePaint = new Paint();
 	private Paint namePaint = new Paint();
 	
@@ -24,6 +26,7 @@ public class CardView extends View {
 	// Properties
 	private String cardName;
 	private int cardValue;
+	private int cardCount;
 	private int cardCountMax;
 	
 	// Berechnete Werte
@@ -53,6 +56,7 @@ public class CardView extends View {
 				attrs, R.styleable.CardView, defStyleAttr, defStyleRes);
 		try {
 			cardValue = a.getInt(R.styleable.CardView_cardValue, cardValue);
+			cardCount = a.getInt(R.styleable.CardView_cardCount, cardCount);
 			cardCountMax = a.getInt(R.styleable.CardView_cardCountMax, cardCountMax);
 			cardName = a.getString(R.styleable.CardView_cardName);
 		} finally {
@@ -77,6 +81,13 @@ public class CardView extends View {
 		boxTextPaint.setStyle(Style.FILL);
 		boxTextPaint.setColor(Color.BLACK);
 		boxTextPaint.setTextAlign(Align.CENTER);
+		
+		// "Aktiv"-Markierung
+		inversePaint.set(paint);
+		inversePaint.setStyle(Style.FILL_AND_STROKE);
+		inverseBoxTextPaint.set(boxTextPaint);
+		inverseBoxTextPaint.setColor(Color.WHITE);
+
 	}
 	
 	// ========== onSizeChanged ==========
@@ -97,6 +108,7 @@ public class CardView extends View {
 		
 		// Text in Kästchen
 		boxTextPaint.setTextSize(0.1f * frame.height());
+		inverseBoxTextPaint.setTextSize(0.1f * frame.height());
 		
 		// Kästchen
 		updateBoxRects();
@@ -157,14 +169,16 @@ public class CardView extends View {
 		
 		// Kästchen
 		for(int i=0; i<cardCountMax; ++i){
+			boolean isMarked = i+1 == cardCount;
+			
 			RectF box = boxRects[i];
 			String value = boxValues[i];
 			
-			canvas.drawRect(box, paint);
-			canvas.drawText(value, 
-					box.centerX(), 
+			canvas.drawRect(box, isMarked ? inversePaint : paint);
+			canvas.drawText(value,
+					box.centerX(),
 					box.bottom - 0.2f * box.height(),
-					boxTextPaint);
+					isMarked ? inverseBoxTextPaint : boxTextPaint);
 		}
 	}
 	
@@ -201,6 +215,15 @@ public class CardView extends View {
 		this.cardValue = cardValue;
 		updateCardValue();
 		updateBoxValues();
+		invalidate();
+	}
+	
+	public int getCardCount() {
+		return cardCount;
+	}
+	
+	public void setCardCount(int cardCount) {
+		this.cardCount = cardCount;
 		invalidate();
 	}
 	

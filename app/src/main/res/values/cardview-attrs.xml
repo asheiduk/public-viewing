@@ -3,6 +3,7 @@
     <declare-styleable name="CardView">
         <attr name="cardName" format="string" />
         <attr name="cardValue" format="integer" />
+        <attr name="cardCount" format="integer" />
         <attr name="cardCountMax" format="integer" />
     </declare-styleable>
 </resources>
