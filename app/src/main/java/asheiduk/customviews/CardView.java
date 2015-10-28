@@ -1,5 +1,6 @@
 package asheiduk.customviews;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -9,9 +10,11 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class CardView extends View {
+	public static final int COUNT_INVALID = -1;
 	
 	private Paint paint = new Paint();
 	private Paint inversePaint = new Paint();
@@ -33,6 +36,9 @@ public class CardView extends View {
 	private String[] boxValues;
 	private RectF[] boxRects;
 	private String cardValueString;
+	
+	// UI-Interaktion State
+	private int selectedCardCount = COUNT_INVALID;
 	
 	// ========== Konstruktoren & Initialisierung ==========
 	
@@ -194,6 +200,34 @@ public class CardView extends View {
 			int boxValue = (i+1)*(i+1)*cardValue;
 			boxValues[i] = Integer.toString(boxValue);
 		}
+	}
+	
+	// ========== UI-Interaktionen ==========
+	
+	protected int getCardCountAt(float x, float y){
+		for(int i=0; i<cardCountMax; ++i){
+			if( boxRects[i].contains(x, y) )
+				return i + 1;
+		}
+		return 0;
+	}
+	
+	public int getSelectedCardCount(){
+		return selectedCardCount;
+	}
+	
+	@Override
+	@SuppressLint("ClickableViewAccessibility")
+	public boolean onTouchEvent(MotionEvent event) {
+		switch(event.getAction()){
+			case MotionEvent.ACTION_DOWN:
+				selectedCardCount = COUNT_INVALID;
+				break;
+			case MotionEvent.ACTION_UP:
+				selectedCardCount = getCardCountAt(event.getX(), event.getY());
+				break;
+		}
+		return super.onTouchEvent(event);
 	}
 	
 	// ========== Properties ==========
